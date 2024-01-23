@@ -95,13 +95,13 @@ export function ThemeSelect() {
 
 	return (
 		<Select defaultValue={value} onValueChange={handleValueChange}>
-			<SelectTrigger className='gap-8 text-xs'>
+			<SelectTrigger className='gap-8 px-4 text-xs bg-background hover:bg-accent hover:text-accent-foreground'>
 				<SelectValue placeholder='Select theme'>
 					<EllipsisText text={Object.entries(monacoThemes).find(([themeId]) => themeId === value)![1]} />
 				</SelectValue>
 			</SelectTrigger>
-			<SelectContent className='p-1.5' sideOffset={4}>
-				<SelectGroup>
+			<SelectContent sideOffset={4}>
+				<SelectGroup className='p-1.5'>
 					{Object.entries(monacoThemes).map(([themeId, themeLabel]) => (
 						<SelectItem
 							key={themeId}
