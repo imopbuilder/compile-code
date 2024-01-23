@@ -12,7 +12,7 @@ type Action = {
 
 export const useEditorOptions = create<State & Action>((set) => ({
 	language: 63,
-	theme: '',
+	theme: 'add-default-theme',
 	setlanguage: (language) => set((state) => ({ language })),
 	settheme: (theme) => set((state) => ({ theme })),
 }));

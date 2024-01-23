@@ -68,7 +68,7 @@ const config = {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 			},
 			minHeight: {
-				hvh: 'calc(100vh - 64px)',
+				hvh: 'calc(100vh - 65px)',
 			},
 		},
 	},
