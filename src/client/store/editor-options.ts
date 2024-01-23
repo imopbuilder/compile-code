@@ -1,3 +1,4 @@
+import { DEFAULT_THEME } from '@/constants/app';
 import { create } from 'zustand';
 
 type State = {
@@ -12,7 +13,7 @@ type Action = {
 
 export const useEditorOptions = create<State & Action>((set) => ({
 	language: 63,
-	theme: 'add-default-theme',
+	theme: DEFAULT_THEME.id,
 	setlanguage: (language) => set((state) => ({ language })),
 	settheme: (theme) => set((state) => ({ theme })),
 }));

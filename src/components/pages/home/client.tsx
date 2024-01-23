@@ -11,17 +11,21 @@ export function CodeEditor() {
 	const theme = useEditorOptions((state) => state.theme);
 	const code = useEditor((state) => state.code);
 	const setcode = useEditor((state) => state.setcode);
+	const backgroundColor = useEditor((state) => state.backgroundColor);
 
 	return (
-		<Editor
-			height='100%'
-			width='100%'
-			defaultLanguage='javascript'
-			language={languageOptions.find((val) => val.id === language)?.value}
-			defaultValue='// some comment'
-			value={code}
-			onChange={(val) => setcode(val as string)}
-		/>
+		<div style={{ backgroundColor }} className='h-full py-5 rounded-lg border'>
+			<Editor
+				height='100%'
+				width='100%'
+				defaultLanguage='javascript'
+				language={languageOptions.find((val) => val.id === language)?.value}
+				theme={theme}
+				defaultValue={`console.log('Hello world')`}
+				value={code}
+				onChange={(val) => setcode(val as string)}
+			/>
+		</div>
 	);
 }
 

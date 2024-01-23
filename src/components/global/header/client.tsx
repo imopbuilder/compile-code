@@ -1,15 +1,20 @@
 'use client';
 
+import { useEditor } from '@/client/store/editor';
 import { useEditorOptions } from '@/client/store/editor-options';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { languageOptions } from '@/constants/app';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DEFAULT_THEME, languageOptions } from '@/constants/app';
 import { cn } from '@/lib/utils/cn';
+import { loader } from '@monaco-editor/react';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { useState } from 'react';
+import monacoThemes from 'monaco-themes/themes/themelist.json';
+import { useLayoutEffect, useState } from 'react';
 import { EllipsisText } from '../ellipsis-text';
 
+// Combobox for editor-language
 export function LanguageSelect() {
 	const [open, setOpen] = useState(false);
 	const value = useEditorOptions((state) => state.language); // language
@@ -55,5 +60,59 @@ export function LanguageSelect() {
 				</Command>
 			</PopoverContent>
 		</Popover>
+	);
+}
+
+// Select for editor-theme
+export function ThemeSelect() {
+	const value = useEditorOptions((state) => state.theme); // theme
+	const setvalue = useEditorOptions((state) => state.settheme); // settheme
+	const setbackgroundcolor = useEditor((state) => state.setbackgroundcolor);
+
+	async function handleValueChange(val: string) {
+		setvalue(val);
+
+		// define theme and set theme
+		await Promise.all([
+			loader.init(),
+			import(`monaco-themes/themes/${Object.entries(monacoThemes).find(([themeId]) => themeId === val)![1]}.json`),
+		]).then(([monaco, themeData]) => {
+			monaco.editor.defineTheme(val, themeData);
+			monaco.editor.setTheme(val);
+			setbackgroundcolor(themeData.colors['editor.background']);
+		});
+	}
+
+	useLayoutEffect(() => {
+		async function defaultTheme() {
+			await Promise.all([loader.init(), import(`monaco-themes/themes/${DEFAULT_THEME.label}.json`)]).then(([monaco, themeData]) => {
+				monaco.editor.defineTheme(DEFAULT_THEME.id, themeData);
+				monaco.editor.setTheme(DEFAULT_THEME.id);
+			});
+		}
+		defaultTheme();
+	}, []);
+
+	return (
+		<Select defaultValue={value} onValueChange={handleValueChange}>
+			<SelectTrigger className='gap-8 text-xs'>
+				<SelectValue placeholder='Select theme'>
+					<EllipsisText text={Object.entries(monacoThemes).find(([themeId]) => themeId === value)![1]} />
+				</SelectValue>
+			</SelectTrigger>
+			<SelectContent className='p-1.5' sideOffset={4}>
+				<SelectGroup>
+					{Object.entries(monacoThemes).map(([themeId, themeLabel]) => (
+						<SelectItem
+							key={themeId}
+							className={cn('text-xs py-2.5 rounded-lg', value === themeId ? 'text-foreground' : 'text-muted-foreground')}
+							value={themeId}
+						>
+							{themeLabel}
+						</SelectItem>
+					))}
+				</SelectGroup>
+			</SelectContent>
+		</Select>
 	);
 }

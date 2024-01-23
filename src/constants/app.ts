@@ -278,3 +278,8 @@ export const languageOptions = [
 		value: 'vbnet',
 	},
 ];
+
+export const DEFAULT_THEME = {
+	id: 'vibrant-ink',
+	label: 'Vibrant Ink',
+};
