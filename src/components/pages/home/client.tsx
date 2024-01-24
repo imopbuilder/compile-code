@@ -2,6 +2,8 @@
 
 import { useEditor } from '@/client/store/editor';
 import { useEditorOptions } from '@/client/store/editor-options';
+import { api } from '@/client/trpc';
+import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { languageOptions } from '@/constants/app';
 import Editor from '@monaco-editor/react';
@@ -45,5 +47,29 @@ export function CustomInput() {
 		<div className='pt-1'>
 			<Textarea className='rounded-lg' placeholder='Custom input...' value={customInput} onChange={(e) => setcustominput(e.target.value)} />
 		</div>
+	);
+}
+
+export function CompileCodeBtn() {
+	const code = useEditor((state) => state.code);
+	const input = useEditor((state) => state.customInput);
+	const language = useEditorOptions((state) => state.language);
+	const mutation = api.code.compileCode.useMutation({
+		onSuccess: () => {
+			console.log('hello world');
+		},
+		onError: () => {
+			console.log('error');
+		},
+	});
+
+	function handleClick() {
+		mutation.mutate({ language, code, input });
+	}
+
+	return (
+		<Button type='button' className='mt-3 ml-auto w-auto' onClick={handleClick}>
+			Compile and Execute
+		</Button>
 	);
 }

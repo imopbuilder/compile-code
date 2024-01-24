@@ -1,5 +1,5 @@
 import Header from '@/components/global/header';
-import { CodeEditor, CodeOutput, CustomInput } from '@/components/pages/home/client';
+import { CodeEditor, CodeOutput, CompileCodeBtn, CustomInput } from '@/components/pages/home/client';
 import { Fragment } from 'react';
 
 export default function Home() {
@@ -18,6 +18,7 @@ export default function Home() {
 							<h3 className='scroll-m-20 text-xl font-semibold tracking-tight'>Output</h3>
 							<CodeOutput />
 							<CustomInput />
+							<CompileCodeBtn />
 						</div>
 					</div>
 				</section>

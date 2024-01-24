@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 type State = {
 	code: string;
-	customInput: string | undefined;
+	customInput: string;
 	backgroundColor: string;
 };
 
@@ -14,7 +14,7 @@ type Action = {
 
 export const useEditor = create<State & Action>((set) => ({
 	code: `console.log('Hello world')`,
-	customInput: undefined,
+	customInput: '',
 	backgroundColor: '#000000',
 	setcode: (code) => set((state) => ({ code })),
 	setcustominput: (input) => set((state) => ({ customInput: input })),
