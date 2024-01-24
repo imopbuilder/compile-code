@@ -1,5 +1,5 @@
 import Header from '@/components/global/header';
-import { CodeEditor, CodeOutput, CompileCodeBtn, CustomInput } from '@/components/pages/home/client';
+import { CodeEditor, CodeOutput, CompileCodeBtn, CustomInput, OutputDetails } from '@/components/pages/home/client';
 import { Fragment } from 'react';
 
 export default function Home() {
@@ -19,6 +19,7 @@ export default function Home() {
 							<CodeOutput />
 							<CustomInput />
 							<CompileCodeBtn />
+							<OutputDetails />
 						</div>
 					</div>
 				</section>

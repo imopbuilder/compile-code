@@ -4,9 +4,12 @@ import { useEditor } from '@/client/store/editor';
 import { useEditorOptions } from '@/client/store/editor-options';
 import { api } from '@/client/trpc';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { languageOptions } from '@/constants/app';
 import Editor from '@monaco-editor/react';
+import { CSSProperties } from 'react';
+import { toast } from 'sonner';
 
 export function CodeEditor() {
 	const language = useEditorOptions((state) => state.language);
@@ -44,7 +47,7 @@ function CodeEditorLoading() {
 						x='0px'
 						y='0px'
 						viewBox='0 0 100 100'
-						style={{ 'enable-background': 'new 0 0 100 100' } as CSSProperties}
+						style={{ enableBackground: 'new 0 0 100 100' } as CSSProperties}
 						xmlSpace='preserve'
 						className='fill-muted-foreground animate-atom-loader'
 					>
@@ -70,10 +73,17 @@ export function CodeOutput() {
 export function CustomInput() {
 	const customInput = useEditor((state) => state.customInput);
 	const setcustominput = useEditor((state) => state.setcustominput);
+	const processing = useEditor((state) => state.processing);
 
 	return (
 		<div className='pt-1'>
-			<Textarea className='rounded-lg' placeholder='Custom input...' value={customInput} onChange={(e) => setcustominput(e.target.value)} />
+			<Textarea
+				className='rounded-lg'
+				placeholder='Custom input...'
+				value={customInput}
+				onChange={(e) => setcustominput(e.target.value)}
+				disabled={processing}
+			/>
 		</div>
 	);
 }
@@ -81,23 +91,93 @@ export function CustomInput() {
 export function CompileCodeBtn() {
 	const code = useEditor((state) => state.code);
 	const input = useEditor((state) => state.customInput);
+	const processing = useEditor((state) => state.processing);
+	const setprocessing = useEditor((state) => state.setprocessing);
+	const setoutput = useEditor((state) => state.setoutput);
 	const language = useEditorOptions((state) => state.language);
+
+	const tokenMutation = api.code.output.useMutation({
+		onSuccess: (data) => {
+			const { status, token } = data;
+
+			// code is processing
+			if (status.id === 1 || status.id === 2) {
+				setTimeout(() => {
+					tokenMutation.mutate({ token });
+				}, 2000);
+				return;
+			}
+
+			// code compiled successfully
+			setprocessing(false);
+			setoutput(data);
+			toast.success('Compiled successfully');
+			return;
+		},
+		onError: () => toast.error('Failed to compile code!'),
+		onSettled: () => {
+			setprocessing(false);
+		},
+	});
+
 	const mutation = api.code.compileCode.useMutation({
-		onSuccess: () => {
-			console.log('hello world');
+		onSuccess: (data) => {
+			tokenMutation.mutate({
+				token: data.token,
+			});
 		},
 		onError: () => {
-			console.log('error');
+			setprocessing(false);
+			toast.error('Failed to compile code!');
 		},
 	});
 
 	function handleClick() {
+		setprocessing(true);
 		mutation.mutate({ language, code, input });
 	}
 
 	return (
-		<Button type='button' className='mt-3 ml-auto w-auto' onClick={handleClick}>
-			Compile and Execute
-		</Button>
+		<div className='flex items-center justify-end'>
+			<Button type='button' className='mt-3 ml-auto w-auto' onClick={handleClick} disabled={processing}>
+				{processing ? 'Processing...' : 'Compile and Execute'}
+			</Button>
+		</div>
+	);
+}
+
+export function OutputDetails() {
+	const output = useEditor((state) => state.output);
+	const processing = useEditor((state) => state.processing);
+
+	if (!output.status || !output.memory || !output.time) return null;
+
+	if (processing)
+		return (
+			<div className='text-sm text-muted-foreground mt-3 space-y-1'>
+				<div className='flex items-center justify-start gap-3'>
+					Status: <Skeleton className='h-4 w-20' />
+				</div>
+				<div className='flex items-center justify-start gap-3'>
+					Memory: <Skeleton className='h-4 w-20' />
+				</div>
+				<div className='flex items-center justify-start gap-3'>
+					Time: <Skeleton className='h-4 w-20' />
+				</div>
+			</div>
+		);
+
+	return (
+		<div className='text-sm text-muted-foreground mt-3 space-y-1'>
+			<p>
+				Status: <span className='font-medium'>{output.status.description}</span>
+			</p>
+			<p>
+				Memory: <span className='font-medium'>{output.memory}</span>
+			</p>
+			<p>
+				Time: <span className='font-medium'>{output.time}</span>
+			</p>
+		</div>
 	);
 }
