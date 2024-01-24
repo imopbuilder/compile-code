@@ -13,7 +13,7 @@ export default function Header() {
 				</nav>
 				<div className='flex items-center justify-center gap-3'>
 					<ThemeToggle />
-					<Button className='px-3.5' variant='outline' asChild>
+					<Button className='px-3.5 rounded-lg' variant='outline' asChild>
 						<Link href={'https://github.com/imopbuilder/compile-code'} target='_black' rel='noreferrer'>
 							<GithubIcon />
 						</Link>
