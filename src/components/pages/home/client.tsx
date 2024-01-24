@@ -114,8 +114,8 @@ export function CompileCodeBtn() {
 			toast.success('Compiled successfully');
 			return;
 		},
-		onError: () => toast.error('Failed to compile code!'),
-		onSettled: () => {
+		onError: () => {
+			toast.error('Failed to compile code!');
 			setprocessing(false);
 		},
 	});
