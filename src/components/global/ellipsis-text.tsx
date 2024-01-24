@@ -28,7 +28,6 @@ export const EllipsisText = ({ text }: { text: string }) => {
 			const originalText = text;
 
 			while (containerWidth !== 0 && textElement.offsetWidth > containerWidth) {
-				console.log(textElement.offsetWidth, containerWidth);
 				textElement.innerText = textElement.innerText.slice(0, -1);
 			}
 
