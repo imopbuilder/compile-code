@@ -127,6 +127,20 @@
 			font-family: var(--font-nunito);
 		}
 	}
+
+	.loader-wrapper {
+		&:first-child {
+			transform: skew(30deg, 20deg);
+		}
+
+		&:last-child {
+			transform: skew(-30deg, -20deg) scale(-1, 1);
+
+			svg {
+				animation-delay: -0.5s;
+			}
+		}
+	}
 }
 
 @layer base {
