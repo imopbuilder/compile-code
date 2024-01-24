@@ -1,5 +1,6 @@
 import { ThemeProvider } from '@/client/providers/theme-provider';
 import { TRPCReactProvider } from '@/client/providers/trpc-react-provider';
+import { Toaster } from '@/components/ui/sonner';
 import '@/styles/main.scss';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -22,6 +23,7 @@ export default function RootLayout({
 				<TRPCReactProvider>
 					<ThemeProvider attribute='class' defaultTheme='dark' enableSystem disableTransitionOnChange>
 						{children}
+						<Toaster />
 					</ThemeProvider>
 				</TRPCReactProvider>
 			</body>
