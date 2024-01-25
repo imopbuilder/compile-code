@@ -6,6 +6,7 @@ import { api } from '@/client/trpc';
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import { languageOptions } from '@/constants/app';
 import { cn } from '@/lib/utils/cn';
@@ -171,32 +172,34 @@ export function OutputDetails() {
 
 	if (!output.status || !output.memory || !output.time) return null;
 
-	if (processing)
-		return (
-			<div className='text-sm text-muted-foreground mt-3 space-y-1'>
-				<div className='flex items-center justify-start gap-3'>
-					Status: <Skeleton className='h-4 w-20' />
-				</div>
-				<div className='flex items-center justify-start gap-3'>
-					Memory: <Skeleton className='h-4 w-20' />
-				</div>
-				<div className='flex items-center justify-start gap-3'>
-					Time: <Skeleton className='h-4 w-20' />
-				</div>
-			</div>
-		);
-
 	return (
-		<div className='text-sm text-muted-foreground mt-3 space-y-1'>
-			<p>
-				Status: <span className='font-medium'>{output.status.description}</span>
-			</p>
-			<p>
-				Memory: <span className='font-medium'>{output.memory}</span>
-			</p>
-			<p>
-				Time: <span className='font-medium'>{output.time}</span>
-			</p>
+		<div className='text-muted-foreground mt-3 border rounded-lg overflow-hidden'>
+			<Table className='table-fixed'>
+				<TableHeader>
+					<TableRow className='bg-muted/50 text-sm'>
+						<TableHead className='text-center'>Performance</TableHead>
+						<TableHead className='text-center'>Result</TableHead>
+					</TableRow>
+				</TableHeader>
+				<TableBody className='text-xs'>
+					<TableRow>
+						<TableCell className='text-center p-3'>Status</TableCell>
+						<TableCell className='font-medium text-center p-3'>
+							{processing ? <Skeleton className='h-4 w-20 mx-auto' /> : output.status.description}
+						</TableCell>
+					</TableRow>
+					<TableRow>
+						<TableCell className='text-center p-3'>Memory</TableCell>
+						<TableCell className='font-medium text-center p-3 justify-center'>
+							{processing ? <Skeleton className='h-4 w-20 mx-auto' /> : output.memory}
+						</TableCell>
+					</TableRow>
+					<TableRow>
+						<TableCell className='text-center p-3'>Time</TableCell>
+						<TableCell className='font-medium text-center p-3'>{processing ? <Skeleton className='h-4 w-20 mx-auto' /> : output.time}</TableCell>
+					</TableRow>
+				</TableBody>
+			</Table>
 		</div>
 	);
 }
