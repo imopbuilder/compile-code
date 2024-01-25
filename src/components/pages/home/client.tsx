@@ -4,9 +4,11 @@ import { useEditor } from '@/client/store/editor';
 import { useEditorOptions } from '@/client/store/editor-options';
 import { api } from '@/client/trpc';
 import { Button } from '@/components/ui/button';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { languageOptions } from '@/constants/app';
+import { cn } from '@/lib/utils/cn';
 import Editor from '@monaco-editor/react';
 import { CSSProperties } from 'react';
 import { toast } from 'sonner';
@@ -63,10 +65,27 @@ function CodeEditorLoading() {
 export function CodeOutput() {
 	const output = useEditor((state) => state.output);
 
-	// Change the theme depending of the error state
+	function getOutput() {
+		if (!output.status) return { className: '', val: null };
+
+		const { id } = output.status;
+		// Compilation Error
+		if (id === 6) return { className: 'text-red-500', val: output.compile_output ? atob(output.compile_output) : null };
+
+		// Accepted
+		if (id === 3) return { className: 'text-green-500', val: output.stdout ? atob(output.stdout) : null };
+
+		// Time limit exceeded
+		if (id === 5) return { className: 'text-red-500', val: 'Time Limit Exceeded' };
+
+		return { className: 'text-red-500', val: output.stderr ? atob(output.stderr) : null };
+	}
 
 	return (
-		<pre className='bg-muted rounded-lg my-2 p-3 text-sm min-h-56 text-muted-foreground'>{output.stdout ? atob(output.stdout) : 'Output panel'}</pre>
+		<ScrollArea className='bg-muted h-56 rounded-lg py-2 my-2'>
+			<pre className={cn('px-3 text-sm text-muted-foreground', getOutput()?.className)}>{getOutput()?.val}</pre>
+			<ScrollBar className='px-3' scrollAreaThumbClassname='bg-muted-foreground/30' orientation='horizontal' />
+		</ScrollArea>
 	);
 }
 

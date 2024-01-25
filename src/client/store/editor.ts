@@ -16,6 +16,7 @@ type State = {
 		token: string | null;
 		time: string | null;
 		memory: number | null;
+		compile_output: string | null;
 	};
 };
 
@@ -40,6 +41,7 @@ export const useEditor = create<State & Action>((set) => ({
 		token: null,
 		time: null,
 		memory: null,
+		compile_output: null,
 	},
 
 	setcode: (code) => set((state) => ({ code })),

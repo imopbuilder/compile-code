@@ -61,6 +61,7 @@ export const codeRouter = createTRPCRouter({
 				token: z.string(),
 				time: z.string().nullable(),
 				memory: z.number().nullable(),
+				compile_output: z.string().nullable(),
 			}),
 		)
 		.mutation(async ({ input }) => {
@@ -87,6 +88,7 @@ export const codeRouter = createTRPCRouter({
 					token: response.data.token,
 					time: response.data.time,
 					memory: response.data.memory,
+					compile_output: response.data.compile_output,
 				};
 			} catch (error) {
 				throw new Error('Failed to process code');
